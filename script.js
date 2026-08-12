@@ -26,14 +26,15 @@ const miembros = [
     numero: "01",
     nombre: "Benjamín Hernando",
     iniciales: "BH",
-    foto: "", // ej: "assets/integrantes/benjamin-hernando.jpg"
+    foto: "assets/integrantes/benjamin-hernando.jpg",
     descripcion: "Hernando es la mente prodigia de los michis, sus exitos hablan por si solo.",
     items: [
       {
         tipo: "videojuego",
-        titulo: "Hollow Knight (ejemplo)",
-        descripcion: "Así se ve un ítem ya cargado: contás qué es, por qué está bueno, y listo. Reemplazá este ejemplo por tu primer contenido real.",
-        link: "https://www.mediafire.com/file/xxxxxxxxxxxxx/hollow-knight.zip",
+        titulo: "Geo Jump",
+        descripcion: "El juego que lo inicio todo, con una aferrima comunidad speedrunner fue considerado por varios años la joya de la esim.",
+        imagen: "assets/items/geo-jump.jpg",
+        link: "https://scratch.mit.edu/projects/1058009583",
       },
     ],
   },
@@ -125,20 +126,48 @@ function renderItems(items) {
   if (!items || items.length === 0) {
     return `<div class="vacio">Todavía no se subió nada acá.</div>`;
   }
+
   const filas = items
     .map((it) => {
       const tipo = TIPOS[it.tipo] || TIPOS.otro;
+
       return `
         <li class="item">
+
+          ${
+            it.imagen
+              ? `
+                <div class="item__imagen">
+                  <img 
+                    src="${it.imagen}" 
+                    alt="Imagen de ${it.titulo}"
+                    loading="lazy"
+                  >
+                </div>
+              `
+              : ""
+          }
+
           <span class="stamp ${tipo.clase}">${tipo.label}</span>
+
           <div class="item__body">
             <h4 class="item__titulo">${it.titulo}</h4>
             <p class="item__descripcion">${it.descripcion}</p>
           </div>
-          <a class="item__link" href="${it.link}" target="_blank" rel="noopener noreferrer">Abrir ↗</a>
+
+          <a 
+            class="item__link" 
+            href="${it.link}" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            Abrir ↗
+          </a>
+
         </li>`;
     })
     .join("");
+
   return `<ul class="items">${filas}</ul>`;
 }
 
