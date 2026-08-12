@@ -32,7 +32,7 @@ const miembros = [
       {
         tipo: "videojuego",
         titulo: "Geo Jump",
-        descripcion: "El juego que lo inicio todo, con una aferrima comunidad speedrunner fue considerado por varios años la joya de la esim.",
+        descripcion: "El juego que lo inicio todo, con una aferrima comunidad speedrunner fue considerado por varios años la joya de la esim, el juego fue creado en colaboracion con casi todos los michis",
         imagen: "assets/items/geo-jump.jpg",
         link: "https://scratch.mit.edu/projects/1058009583",
       },
@@ -45,7 +45,15 @@ const miembros = [
     iniciales: "MM",
     foto: "",
     descripcion: "Mauri es una de las mentes maestras de michis, creador de muchisimos proyectos y linuxero de corazon ",
-    items: [],
+    items: [
+      {
+        tipo: "Canal",
+        titulo: "Mauriprod",
+        descripcion: "Joya contemporanea autor de varios proyectos desde musicales hasta comicos, su canal cuenta como un patrimonio a la imaginacion y recopila videos relacionados a los michis (se cuenta que hay mucho contenido borrado)",
+        imagen: "assets/items/mauriprod.jpg",
+        link: "https://www.youtube.com/@mauriprod",
+      },
+    ],
   },
   {
     id: "juan-perez",
