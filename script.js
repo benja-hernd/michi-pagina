@@ -27,7 +27,7 @@ const miembros = [
     nombre: "Benjamín Hernando",
     iniciales: "BH",
     foto: "", // ej: "assets/integrantes/benjamin-hernando.jpg"
-    descripcion: "Escribí acá una breve descripción de Benjamín: cómo es, qué le gusta, qué se van a encontrar en su expediente.",
+    descripcion: "Hernando es la mente prodigia de los michis, sus exitos hablan por si solo.",
     items: [
       {
         tipo: "videojuego",
@@ -43,7 +43,7 @@ const miembros = [
     nombre: "Mauricio Martínez",
     iniciales: "MM",
     foto: "",
-    descripcion: "Escribí acá una breve descripción de Mauricio.",
+    descripcion: "Mauri es una de las mentes maestras de michis, creador de muchisimos proyectos y linuxero de corazon ",
     items: [],
   },
   {
@@ -51,8 +51,8 @@ const miembros = [
     numero: "03",
     nombre: "Juan Pérez",
     iniciales: "JP",
-    foto: "",
-    descripcion: "Escribí acá una breve descripción de Juan.",
+    foto: "assets/integrantes/juan-perez.jpg",
+    descripcion: "El perez, portador de mil apodos, es un reconocido momero del fondo que siempre liga las cagadas a pedo (incluso cuando no tiene que ver).",
     items: [],
   },
   {
@@ -60,8 +60,8 @@ const miembros = [
     numero: "04",
     nombre: "Lautaro Edelman",
     iniciales: "LE",
-    foto: "",
-    descripcion: "Escribí acá una breve descripción de Lautaro.",
+    foto: "assets/integrantes/lautaro-edelman.jpg",
+    descripcion: "Lauta, el ricky ricon, Edelman, es conocido por sus dotes de tecnologia y por que su casa es el spot de juntadas.",
     items: [],
   },
   {
@@ -69,8 +69,8 @@ const miembros = [
     numero: "05",
     nombre: "Juan Benítez",
     iniciales: "JB",
-    foto: "",
-    descripcion: "Escribí acá una breve descripción de Juan.",
+    foto: "assets/integrantes/juan-benitez.jpg",
+    descripcion: "Juanma es el integrante mas pavo, nombrado rey IA por su chatGTP customizado.",
     items: [],
   },
   {
@@ -79,7 +79,7 @@ const miembros = [
     nombre: "Guillermo Maj",
     iniciales: "GM",
     foto: "",
-    descripcion: "Escribí acá una breve descripción de Guillermo.",
+    descripcion: "Maj, el integrante que descendio y quedo en tercero, su nombre es usado en muchos memes internos.",
     items: [],
   },
   {
@@ -87,8 +87,8 @@ const miembros = [
     numero: "07",
     nombre: "Tobías Karabyn",
     iniciales: "TK",
-    foto: "",
-    descripcion: "Escribí acá una breve descripción de Tobías.",
+    foto: "assets/integrantes/tobias-karabyn.jpg",
+    descripcion: "Tobi es el integrante fugaz, pocas veces aparece pero cuando lo hace la juntada se pone chingona, cada una de sus apariciones es memorable.",
     items: [],
   },
   {
@@ -96,8 +96,8 @@ const miembros = [
     numero: "08",
     nombre: "Joaquín Caballero",
     iniciales: "JC",
-    foto: "",
-    descripcion: "Escribí acá una breve descripción de Joaquín.",
+    foto: "assets/integrantes/joaquin-caballero.jpg",
+    descripcion: "Joa es el novato de los michis, nuevo integrante que nunca viene a las juntadas pero por su calidad de amistad es merecedor de pertenecer al grupo.",
     items: [],
   },
 ];
