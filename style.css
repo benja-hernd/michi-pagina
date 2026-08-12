@@ -1,0 +1,524 @@
+/* =========================================================
+   LOS MICHIS — style.css
+   Concepto: archivo/fichero personal. Cada integrante es un
+   "expediente" numerado; cada contenido que suben es un ítem
+   con un sello (stamp) según su tipo (video, juego, web, otro).
+   ========================================================= */
+
+:root{
+  /* --- color --- */
+  --ink: #12161d;
+  --ink-2: #1b212b;
+  --ink-3: #232b37;
+  --line: rgba(237,227,207,.14);
+
+  --paper: #ede3cf;
+  --paper-2: #e2d6ba;
+  --paper-dim: #cdbf9c;
+
+  --amber: #c68a34;
+  --amber-bright: #e2a94f;
+  --stamp-red: #a8402f;
+  --moss: #5c6f52;
+  --slate: #6b7280;
+
+  --text-hi: #f4ecd8;
+  --text-body: #cdc3ab;
+  --text-dim: #8d846f;
+  --text-on-paper: #221c12;
+  --text-on-paper-dim: #5c5136;
+
+  /* --- tipografía --- */
+  --f-display: "Fraunces", Georgia, serif;
+  --f-mono: "Space Mono", "Courier New", monospace;
+  --f-body: "Inter", system-ui, sans-serif;
+
+  --radius: 6px;
+  --shadow: 0 18px 40px rgba(0,0,0,.35);
+  --ease: cubic-bezier(.22,.68,0,1);
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+
+html{
+  scroll-behavior: smooth;
+}
+
+body{
+  margin: 0;
+  background: var(--ink);
+  color: var(--text-body);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4{
+  font-family: var(--f-display);
+  color: var(--text-hi);
+  margin: 0;
+  font-weight: 600;
+}
+
+p{ margin: 0; }
+
+a{ color: inherit; text-decoration: none; }
+
+img{ max-width: 100%; display: block; }
+
+.eyebrow{
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--amber-bright);
+  margin: 0 0 .6rem;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+.topbar{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem clamp(1.25rem, 4vw, 3rem);
+  background: rgba(18,22,29,.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar__brand{
+  font-family: var(--f-mono);
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .12em;
+  color: var(--text-hi);
+}
+
+.topbar__dot{ color: var(--amber); }
+
+.topbar__sub{
+  color: var(--text-dim);
+  text-transform: lowercase;
+  letter-spacing: .1em;
+}
+
+.topbar__nav{
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+  font-family: var(--f-mono);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.topbar__nav a{
+  color: var(--text-body);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+
+.topbar__nav a:hover{
+  color: var(--amber-bright);
+  border-color: var(--amber-bright);
+}
+
+/* =========================================================
+   Hero — la foto del grupo es la protagonista, el texto
+   funciona como el pie de foto de un expediente.
+   ========================================================= */
+.hero{
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 6vw, 4rem) clamp(3rem, 8vw, 5rem);
+
+  background-image:
+    linear-gradient(180deg, rgba(18,22,29,.25) 0%, rgba(18,22,29,.55) 55%, rgba(15,18,24,.97) 100%),
+    url("assets/grupo-los-michis.jpg");
+  background-size: cover;
+  background-position: center 35%;
+  background-repeat: no-repeat;
+  background-color: var(--ink);
+}
+
+.hero__inner{
+  max-width: 46rem;
+}
+
+.hero__title{
+  font-size: clamp(2.8rem, 9vw, 5.4rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: .95;
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle{
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  color: var(--text-body);
+  max-width: 38ch;
+  margin-bottom: 1.6rem;
+}
+
+.hero__cta{
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--amber-bright);
+  padding: .75rem 1.3rem;
+  border-radius: var(--radius);
+  transition: transform .2s var(--ease), background .2s var(--ease);
+}
+
+.hero__cta:hover{
+  background: var(--paper);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   Secciones genéricas
+   ========================================================= */
+.indice, .expedientes{
+  padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 6vw, 4rem);
+}
+
+.expedientes{
+  background: var(--ink-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.section__head{
+  max-width: 40rem;
+  margin-bottom: 2.5rem;
+}
+
+.section__head h2{
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  font-style: italic;
+}
+
+.section__lead{
+  color: var(--text-dim);
+  margin-top: .6rem;
+  font-size: .95rem;
+}
+
+/* =========================================================
+   Índice — grilla de fichas (tarjetas tipo ficha de archivo)
+   ========================================================= */
+.grid-fichas{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.ficha{
+  text-align: left;
+  font-family: inherit;
+  background: var(--paper);
+  color: var(--text-on-paper);
+  border: none;
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transition: transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+
+.ficha:hover, .ficha:focus-visible{
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+}
+
+.ficha__top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .9rem;
+}
+
+.ficha__numero{
+  font-family: var(--f-mono);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  color: var(--text-on-paper-dim);
+}
+
+.ficha__avatar{
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--f-mono);
+  font-size: .7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ficha__avatar--foto,
+.expediente__avatar--foto{
+  background-size: cover;
+  background-position: center;
+}
+
+.ficha__nombre{
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-top: 1px dashed var(--paper-dim);
+  padding-top: .7rem;
+  margin-bottom: .4rem;
+}
+
+.ficha__meta{
+  font-family: var(--f-mono);
+  font-size: .7rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-on-paper-dim);
+}
+
+/* =========================================================
+   Expedientes — acordeón. El encabezado es la "tapa" oscura
+   de la carpeta; al abrirla aparece la ficha de papel.
+   ========================================================= */
+.acordeon{
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.expediente{
+  scroll-margin-top: 5.5rem;
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.expediente__header{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  padding: 1rem 1.2rem;
+  background: transparent;
+  border: none;
+  color: var(--text-hi);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.expediente__numero{
+  font-family: var(--f-mono);
+  font-size: .75rem;
+  color: var(--text-dim);
+  width: 1.6rem;
+}
+
+.expediente__avatar{
+  width: 2.1rem;
+  height: 2.1rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--ink);
+  font-family: var(--f-mono);
+  font-size: .7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expediente__nombre{
+  font-family: var(--f-display);
+  font-size: 1.15rem;
+  flex: 1;
+}
+
+.expediente__chevron{
+  color: var(--text-dim);
+  transition: transform .25s var(--ease);
+  flex-shrink: 0;
+}
+
+.expediente.is-open .expediente__chevron{
+  transform: rotate(180deg);
+  color: var(--amber-bright);
+}
+
+.expediente__panel{
+  background: var(--paper);
+  color: var(--text-on-paper);
+  padding: 1.4rem 1.3rem 1.6rem;
+  border-top: 1px solid var(--paper-dim);
+}
+
+.expediente__label{
+  font-family: var(--f-mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-on-paper-dim);
+  margin-bottom: .4rem;
+}
+
+.expediente__label--items{
+  margin-top: 1.3rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--paper-dim);
+}
+
+.expediente__descripcion{
+  font-size: .98rem;
+  max-width: 60ch;
+}
+
+.vacio{
+  border: 1px dashed var(--paper-dim);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  font-size: .9rem;
+  color: var(--text-on-paper-dim);
+}
+
+/* --- ítems dentro de un expediente --- */
+.items{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+}
+
+.item{
+  display: flex;
+  align-items: flex-start;
+  gap: .9rem;
+  background: var(--paper-2);
+  border-radius: var(--radius);
+  padding: .85rem .9rem;
+}
+
+.stamp{
+  flex-shrink: 0;
+  font-family: var(--f-mono);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .3rem .5rem;
+  border-radius: 3px;
+  transform: rotate(-2deg);
+  color: var(--paper);
+}
+
+.tipo-video{ background: var(--stamp-red); }
+.tipo-juego{ background: var(--moss); }
+.tipo-web{ background: var(--amber); color: var(--text-on-paper); }
+.tipo-otro{ background: var(--slate); }
+
+.item__body{ flex: 1; min-width: 0; }
+
+.item__titulo{
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: .2rem;
+}
+
+.item__descripcion{
+  font-size: .88rem;
+  color: var(--text-on-paper-dim);
+}
+
+.item__link{
+  flex-shrink: 0;
+  font-family: var(--f-mono);
+  font-size: .72rem;
+  letter-spacing: .04em;
+  border: 1px solid var(--text-on-paper);
+  border-radius: 999px;
+  padding: .35rem .75rem;
+  white-space: nowrap;
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+
+.item__link:hover{
+  background: var(--text-on-paper);
+  color: var(--paper);
+}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.footer{
+  padding: 2.2rem clamp(1.25rem, 6vw, 4rem);
+  text-align: center;
+  font-family: var(--f-mono);
+  font-size: .75rem;
+  color: var(--text-dim);
+}
+
+/* =========================================================
+   Animación de aparición al hacer scroll
+   ========================================================= */
+.reveal{
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+
+.reveal.is-visible{
+  opacity: 1;
+  transform: none;
+}
+
+.hero__inner > .reveal:nth-child(1){ transition-delay: .05s; }
+.hero__inner > .reveal:nth-child(2){ transition-delay: .15s; }
+.hero__inner > .reveal:nth-child(3){ transition-delay: .25s; }
+.hero__inner > .reveal:nth-child(4){ transition-delay: .35s; }
+
+/* =========================================================
+   Accesibilidad
+   ========================================================= */
+a:focus-visible,
+button:focus-visible{
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{
+    animation: none !important;
+    transition: none !important;
+  }
+  html{ scroll-behavior: auto; }
+  .reveal{ opacity: 1; transform: none; }
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 640px){
+  .topbar__sub{ display: none; }
+  .item{ flex-wrap: wrap; }
+  .item__link{ margin-left: 2.5rem; }
+}
