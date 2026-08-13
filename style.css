@@ -465,26 +465,7 @@ img{ max-width: 100%; display: block; }
   background: var(--text-on-paper);
   color: var(--paper);
 }
-.item__imagen {
-  width: 180px;
-  height: 100px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #111;
-}
 
-.item__imagen img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.item:hover .item__imagen img {
-  transform: scale(1.05);
-}
 /* =========================================================
    Footer
    ========================================================= */
@@ -538,6 +519,22 @@ button:focus-visible{
    ========================================================= */
 @media (max-width: 640px){
   .topbar__sub{ display: none; }
-  .item{ flex-wrap: wrap; }
-  .item__link{ margin-left: 2.5rem; }
+
+  /* En PC el ítem es una fila (sello · texto · botón).
+     En celular lo apilamos: sello arriba, texto, y el botón
+     abajo ocupando todo el ancho para que sea fácil de tocar. */
+  .item{
+    flex-direction: column;
+    align-items: stretch;
+    gap: .55rem;
+  }
+
+  .stamp{
+    align-self: flex-start;
+  }
+
+  .item__link{
+    align-self: stretch;
+    text-align: center;
+  }
 }
