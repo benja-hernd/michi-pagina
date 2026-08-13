@@ -422,10 +422,15 @@ img{ max-width: 100%; display: block; }
   flex-shrink: 0;
   width: 3.4rem;
   height: 3.4rem;
+  max-width: 3.4rem;
+  max-height: 3.4rem;
   border-radius: 4px;
+  overflow: hidden;
   background-color: var(--paper-dim);
   background-size: cover;
   background-position: center;
+  object-fit: cover;
+  display: block;
 }
 
 .stamp{
@@ -542,8 +547,9 @@ button:focus-visible{
 
   .item__miniatura{
     width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    height: 11rem;
+    max-height: 11rem;
   }
 
   .stamp{
