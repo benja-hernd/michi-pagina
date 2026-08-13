@@ -418,6 +418,16 @@ img{ max-width: 100%; display: block; }
   padding: .85rem .9rem;
 }
 
+.item__miniatura{
+  flex-shrink: 0;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 4px;
+  background-color: var(--paper-dim);
+  background-size: cover;
+  background-position: center;
+}
+
 .stamp{
   flex-shrink: 0;
   font-family: var(--f-mono);
@@ -434,6 +444,7 @@ img{ max-width: 100%; display: block; }
 .tipo-video{ background: var(--stamp-red); }
 .tipo-juego{ background: var(--moss); }
 .tipo-web{ background: var(--amber); color: var(--text-on-paper); }
+.tipo-canal{ background: var(--stamp-red); }
 .tipo-otro{ background: var(--slate); }
 
 .item__body{ flex: 1; min-width: 0; }
@@ -527,6 +538,12 @@ button:focus-visible{
     flex-direction: column;
     align-items: stretch;
     gap: .55rem;
+  }
+
+  .item__miniatura{
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 
   .stamp{
