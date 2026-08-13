@@ -33,7 +33,7 @@ const miembros = [
       {
         tipo: "videojuego",
         titulo: "Geo Jump",
-        descripcion: "El juego que lo inició todo. Geo Jump se convirtió rápidamente en uno de los títulos más importantes dentro de la historia de Los Michis, siendo recordado por muchos como una verdadera joya de la ESIM. Durante varios años, el juego logró reunir a una comunidad de jugadores especialmente dedicada, destacándose sobre todo por su creciente y aferrada comunidad de speedrunners, quienes se encargaron de llevar la experiencia al límite y buscar constantemente nuevas formas de superar los récords existentes. El proyecto nació gracias a la colaboración de casi todos Los Michis, convirtiéndose no solamente en un juego, sino también en uno de los primeros grandes proyectos realizados en conjunto por el grupo. Cada integrante aportó, de una manera u otra, para que Geo Jump pudiera convertirse en lo que finalmente fue. Con el paso del tiempo, el juego fue ganando reconocimiento y construyendo su propia pequeña historia dentro de la comunidad. Durante varios años, Geo Jump fue considerado por muchos como la joya de la ESIM, tanto por su propuesta como por la comunidad que consiguió formar a su alrededor. Las partidas, los intentos de superar marcas y la competencia entre jugadores terminaron convirtiéndose en una parte fundamental de la identidad del juego. Lo que comenzó como un proyecto realizado entre amigos terminó creando una comunidad que mantuvo vivo el juego durante años y que convirtió cada nuevo récord en un pequeño acontecimiento. Por todo esto, Geo Jump ocupa un lugar especial en la historia de Los Michis: fue el comienzo de todo, el proyecto que demostró lo que podía lograrse cuando prácticamente todo el grupo trabajaba en conjunto y, con el tiempo, terminó convirtiéndose en uno de los juegos más recordados de la ESIM.",
+        descripcion: "Geo Jump fue el proyecto que lo inició todo para Los Michis y una joya emblemática de la ESIM. Creado gracias a la colaboración de casi todo el grupo, el juego destacó por su apasionada comunidad de speedrunners, quienes llevaron la experiencia al límite compitiendo por superar récords. Más que un simple juego, Geo Jump demostró el potencial del trabajo en equipo, consolidando una comunidad fiel y un legado inolvidable en la historia de la ESIM..",
         imagen: "assets/items/geo-jump.jpg",
         link: "https://scratch.mit.edu/projects/1058009583",
       },
@@ -50,7 +50,7 @@ const miembros = [
       {
         tipo: "Canal",
         titulo: "Mauriprod",
-        descripcion: "Joya contemporanea autor de varios proyectos desde musicales hasta comicos, su canal cuenta como un patrimonio a la imaginacion y recopila videos relacionados a los michis (se cuenta que hay mucho contenido borrado)",
+        descripcion: "Considerado una auténtica joya contemporánea, este creador ha demostrado una versatilidad única al liderar diversos proyectos que abarcan desde composiciones musicales hasta ingeniosas propuestas cómicas. Su canal funciona como un verdadero patrimonio a la imaginación, reuniendo un valioso archivo de videos centrados en el universo de Los Michis; un espacio donde la creatividad no tiene límites y donde, según cuentan las leyendas de la comunidad, aún descansa un aura de misterio debido a la gran LOST MEDIA que alguna vez formó parte de su historia.",
         imagen: "assets/items/mauriprod.jpg",
         link: "https://www.youtube.com/@mauriprod",
       },
@@ -304,5 +304,82 @@ document.addEventListener("DOMContentLoaded", () => {
   renderGridFichas();
   renderAcordeon();
   inicializarEventos();
+  inicializarMinijuego();
   inicializarRevelado();
 });
+/* ======================== Minijuego Michis ======================== */
+
+let michiScore = 0;
+let michiGameInterval = null;
+
+function crearMichiFlotante() {
+  const container = document.getElementById("michi-game-area");
+  if (!container) return;
+
+  // Elegir un integrante al azar que tenga foto
+  const miembrosConFoto = miembros.filter((m) => m.foto);
+  if (miembrosConFoto.length === 0) return;
+
+  const miembro = miembrosConFoto[Math.floor(Math.random() * miembrosConFoto.length)];
+
+  // Crear elemento del michi
+  const michi = document.createElement("button");
+  michi.className = "michi-target";
+  michi.type = "button";
+  michi.style.backgroundImage = `url('${miembro.foto}')`;
+  michi.setAttribute("title", `¡Cazaste a ${primerNombre(miembro.nombre)}!`);
+
+  // Posición aleatoria dentro del área del juego
+  const rect = container.getBoundingClientRect();
+  const posX = Math.random() * (rect.width - 60);
+  const posY = Math.random() * (rect.height - 60);
+
+  michi.style.left = `${Math.max(10, posX)}px`;
+  michi.style.top = `${Math.max(10, posY)}px`;
+
+  // Evento al hacer clic
+  michi.addEventListener("click", (e) => {
+    e.stopPropagation();
+    michiScore++;
+    
+    // Actualizar el contador en pantalla
+    const scoreElem = document.getElementById("michi-score");
+    if (scoreElem) scoreElem.textContent = michiScore;
+
+    // Efecto visual de click y remover
+    michi.style.transform = "scale(0) rotate(180deg)";
+    michi.style.opacity = "0";
+    setTimeout(() => michi.remove(), 200);
+  });
+
+  container.appendChild(michi);
+
+  // Auto-eliminar si no se cliquea a los 3.5 segundos
+  setTimeout(() => {
+    if (michi.parentNode) {
+      michi.style.opacity = "0";
+      setTimeout(() => michi.remove(), 300);
+    }
+  }, 3500);
+}
+
+function inicializarMinijuego() {
+  // Generar la estructura del minijuego al final del body si no existe
+  if (!document.getElementById("michi-game-section")) {
+    const footerGame = document.createElement("section");
+    footerGame.id = "michi-game-section";
+    footerGame.className = "michi-game-section reveal";
+    footerGame.innerHTML = `
+      <div class="michi-game-header">
+        <h3>🎮 Caza-Michis Secreto</h3>
+        <p>¡Cliqueá los michis que van apareciendo para juntar puntos!</p>
+        <div class="michi-score-board">Puntos: <span id="michi-score">0</span></div>
+      </div>
+      <div id="michi-game-area" class="michi-game-area"></div>
+    `;
+    document.body.appendChild(footerGame);
+  }
+
+  // Aparece un nuevo michi cada 1.5 segundos
+  michiGameInterval = setInterval(crearMichiFlotante, 1500);
+}

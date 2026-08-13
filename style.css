@@ -711,3 +711,67 @@ button:focus-visible{
     font-size: .65rem;
   }
 }
+/* Estilos para el minijuego del footer */
+.michi-game-section {
+  margin: 50px auto 20px;
+  padding: 20px;
+  max-width: 900px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.michi-game-header h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+}
+
+.michi-game-header p {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.michi-score-board {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.1rem;
+  background: #ff5722;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.michi-game-area {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-top: 15px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.michi-target {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  animation: popIn 0.3s ease;
+}
+
+.michi-target:hover {
+  transform: scale(1.15);
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
