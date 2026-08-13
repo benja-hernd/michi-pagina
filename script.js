@@ -17,6 +17,7 @@ const TIPOS = {
   youtube:    { label: "VIDEO", clase: "tipo-video" },
   videojuego: { label: "JUEGO", clase: "tipo-juego" },
   pagina:     { label: "WEB",   clase: "tipo-web"   },
+  Canal:     { label: "CANAL",   clase: "tipo-canal"   },
   otro:       { label: "OTRO",  clase: "tipo-otro"  },
 };
 
