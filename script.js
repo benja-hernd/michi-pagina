@@ -63,7 +63,15 @@ const miembros = [
     iniciales: "JP",
     foto: "assets/integrantes/juan-perez.jpg",
     descripcion: "El perez, El Zurako, WHOL. El mas fachero/Rompecorazones y con mas aura de los Michis.",
-    items: [],
+    items: [
+      {
+        tipo: "Canal",
+        titulo: "Whol",
+        descripcion: "Whol es la misteriosa identidad de Perez por fin revelada al publico, con una trascendencia innegable en posadas, en principio fue un ARG con un codigo cifrado que nunca pudo ser descifrado, pero con el tiempo se transformo en una cuenta para grabar a la gente de la plaza 9 de julio y calificar sus caminatas, tuvo impacto en toda la ciudad",
+        imagen: "assets/items/whol.jpg",
+        link: "https://www.tiktok.com/@whol.daedsi",
+      },
+    ],
   },
   {
     id: "lautaro-edelman",
@@ -318,7 +326,7 @@ const noMiembros = [
 ];
 
 let michiScore = 0;
-let michiGameInterval = null;
+let michiLoopTimeout = null;
 let juegoActivo = false;
 
 function actualizarMarcador() {
@@ -328,7 +336,7 @@ function actualizarMarcador() {
 
 function perderJuego(motivo) {
   juegoActivo = false;
-  if (michiGameInterval) clearInterval(michiGameInterval);
+  if (michiLoopTimeout) clearTimeout(michiLoopTimeout);
 
   // Limpiar objetivos restantes en pantalla
   const container = document.getElementById("michi-game-area");
@@ -337,7 +345,7 @@ function perderJuego(motivo) {
     targets.forEach((t) => t.remove());
   }
 
-  // Mostrar mensaje de derrota forzando display: flex
+  // Mostrar mensaje de derrota
   const overlay = document.getElementById("michi-game-over");
   const mensaje = document.getElementById("michi-game-over-msg");
   if (overlay && mensaje) {
@@ -346,12 +354,25 @@ function perderJuego(motivo) {
   }
 }
 
+function programarSiguienteMichi() {
+  if (!juegoActivo) return;
+
+  crearMichiFlotante();
+
+  // DIFICULTAD PROGRESIVA (Aparición)
+  // Arranca en 1500ms (1.5s) y baja 40ms por cada punto, hasta un mínimo de 400ms
+  const intervaloAparicion = Math.max(400, 1500 - michiScore * 40);
+
+  if (michiLoopTimeout) clearTimeout(michiLoopTimeout);
+  michiLoopTimeout = setTimeout(programarSiguienteMichi, intervaloAparicion);
+}
+
 function reiniciarJuego() {
   michiScore = 0;
   actualizarMarcador();
   juegoActivo = true;
 
-  // Ocultar overlays con CSS inline para garantizar que se oculten
+  // Ocultar overlays
   const startOverlay = document.getElementById("michi-game-start");
   if (startOverlay) startOverlay.style.display = "none";
 
@@ -365,9 +386,9 @@ function reiniciarJuego() {
     targets.forEach((t) => t.remove());
   }
 
-  // Arrancar el loop del juego
-  if (michiGameInterval) clearInterval(michiGameInterval);
-  michiGameInterval = setInterval(crearMichiFlotante, 1400);
+  // Iniciar loop dinámico del juego
+  if (michiLoopTimeout) clearTimeout(michiLoopTimeout);
+  programarSiguienteMichi();
 }
 
 window.reiniciarJuego = reiniciarJuego;
@@ -424,7 +445,10 @@ function crearMichiFlotante() {
 
   container.appendChild(target);
 
-  // Temporizador para desaparecer el ícono
+  // DIFICULTAD PROGRESIVA (Desaparición)
+  // Arranca en 3000ms (3s) y baja 60ms por cada punto, hasta un mínimo de 800ms
+  const tiempoVida = Math.max(800, 3000 - michiScore * 60);
+
   setTimeout(() => {
     if (target.parentNode && juegoActivo) {
       if (!esIntruso) {
@@ -434,7 +458,7 @@ function crearMichiFlotante() {
         setTimeout(() => target.remove(), 300);
       }
     }
-  }, 3000);
+  }, tiempoVida);
 }
 
 function inicializarMinijuego() {
@@ -445,16 +469,16 @@ function inicializarMinijuego() {
     footerGame.innerHTML = `
       <div class="michi-game-header">
         <h3>🎮 Caza-Michis</h3>
-        <p>Atrapá solo a los Michis reales. ¡Si cliqueás a un impostor o dejás pasar a un Michi, perdés!</p>
+        <p>Atrapá solo a los Michis reales. ¡A medida que sumás puntos se pone más rápido!</p>
         <div class="michi-score-board">Puntos: <span id="michi-score">0</span></div>
       </div>
       <div id="michi-game-area" class="michi-game-area">
-        <!-- Overlay inicial (visible al principio) -->
+        <!-- Overlay inicial -->
         <div id="michi-game-start" class="michi-game-over" style="display: flex;">
           <button type="button" id="michi-start-btn" class="michi-retry-btn">▶ Empezar a jugar</button>
         </div>
 
-        <!-- Overlay de Game Over (oculto al principio) -->
+        <!-- Overlay de Game Over -->
         <div id="michi-game-over" class="michi-game-over" style="display: none;">
           <p id="michi-game-over-msg">¡Perdiste!</p>
           <button type="button" id="michi-retry-btn" class="michi-retry-btn">Intentar de nuevo ↻</button>
