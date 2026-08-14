@@ -44,7 +44,7 @@ const miembros = [
     numero: "02",
     nombre: "Mauricio Martínez",
     iniciales: "MM",
-    foto: "",
+    foto: "assets/integrantes/mauricio-martinez.jpg",
     descripcion: "Mauri es una de las mentes maestras de michis, creador de muchisimos proyectos y linuxero de corazon ",
     items: [
       {
@@ -319,7 +319,7 @@ const noMiembros = [
 
 let michiScore = 0;
 let michiGameInterval = null;
-let juegoActivo = true;
+let juegoActivo = false;
 
 function actualizarMarcador() {
   const scoreElem = document.getElementById("michi-score");
@@ -328,18 +328,21 @@ function actualizarMarcador() {
 
 function perderJuego(motivo) {
   juegoActivo = false;
-  clearInterval(michiGameInterval);
+  if (michiGameInterval) clearInterval(michiGameInterval);
 
   // Limpiar objetivos restantes en pantalla
   const container = document.getElementById("michi-game-area");
-  if (container) container.innerHTML = "";
+  if (container) {
+    const targets = container.querySelectorAll(".michi-target");
+    targets.forEach((t) => t.remove());
+  }
 
-  // Mostrar mensaje de derrota
+  // Mostrar mensaje de derrota forzando display: flex
   const overlay = document.getElementById("michi-game-over");
   const mensaje = document.getElementById("michi-game-over-msg");
   if (overlay && mensaje) {
     mensaje.textContent = motivo;
-    overlay.hidden = false;
+    overlay.style.display = "flex";
   }
 }
 
@@ -348,16 +351,26 @@ function reiniciarJuego() {
   actualizarMarcador();
   juegoActivo = true;
 
-  const overlay = document.getElementById("michi-game-over");
-  if (overlay) overlay.hidden = true;
+  // Ocultar overlays con CSS inline para garantizar que se oculten
+  const startOverlay = document.getElementById("michi-game-start");
+  if (startOverlay) startOverlay.style.display = "none";
 
+  const gameOverOverlay = document.getElementById("michi-game-over");
+  if (gameOverOverlay) gameOverOverlay.style.display = "none";
+
+  // Limpiar fichas viejas
   const container = document.getElementById("michi-game-area");
-  if (container) container.innerHTML = "";
+  if (container) {
+    const targets = container.querySelectorAll(".michi-target");
+    targets.forEach((t) => t.remove());
+  }
 
-  // Reiniciar el intervalo de aparición
-  clearInterval(michiGameInterval);
+  // Arrancar el loop del juego
+  if (michiGameInterval) clearInterval(michiGameInterval);
   michiGameInterval = setInterval(crearMichiFlotante, 1400);
 }
+
+window.reiniciarJuego = reiniciarJuego;
 
 function crearMichiFlotante() {
   if (!juegoActivo) return;
@@ -398,14 +411,11 @@ function crearMichiFlotante() {
     if (!juegoActivo) return;
 
     if (esIntruso) {
-      // Perdió por cliquear a un no-integrante
       perderJuego(`¡Cagaste! Cliqueaste a un impostor (${objetivoData.nombre}).`);
     } else {
-      // Punto válido
       michiScore++;
       actualizarMarcador();
 
-      // Efecto visual de desintegración
       target.style.transform = "scale(0) rotate(180deg)";
       target.style.opacity = "0";
       setTimeout(() => target.remove(), 200);
@@ -414,19 +424,17 @@ function crearMichiFlotante() {
 
   container.appendChild(target);
 
-  // Temporizador para hacer desaparecer el ícono
+  // Temporizador para desaparecer el ícono
   setTimeout(() => {
     if (target.parentNode && juegoActivo) {
       if (!esIntruso) {
-        // Se escapó un Michi legítimo -> PERDIÓ
         perderJuego("¡Se te escapó un Michi! Récord reiniciado.");
       } else {
-        // Se escapó un impostor -> Todo bien, desaparece suavemente
         target.style.opacity = "0";
         setTimeout(() => target.remove(), 300);
       }
     }
-  }, 3000); // 3 segundos para reaccionar
+  }, 3000);
 }
 
 function inicializarMinijuego() {
@@ -436,19 +444,33 @@ function inicializarMinijuego() {
     footerGame.className = "michi-game-section reveal";
     footerGame.innerHTML = `
       <div class="michi-game-header">
-        <h3>🎮 Caza-Michis </h3>
+        <h3>🎮 Caza-Michis</h3>
         <p>Atrapá solo a los Michis reales. ¡Si cliqueás a un impostor o dejás pasar a un Michi, perdés!</p>
         <div class="michi-score-board">Puntos: <span id="michi-score">0</span></div>
       </div>
       <div id="michi-game-area" class="michi-game-area">
-        <div id="michi-game-over" class="michi-game-over" hidden>
+        <!-- Overlay inicial (visible al principio) -->
+        <div id="michi-game-start" class="michi-game-over" style="display: flex;">
+          <button type="button" id="michi-start-btn" class="michi-retry-btn">▶ Empezar a jugar</button>
+        </div>
+
+        <!-- Overlay de Game Over (oculto al principio) -->
+        <div id="michi-game-over" class="michi-game-over" style="display: none;">
           <p id="michi-game-over-msg">¡Perdiste!</p>
-          <button type="button" class="michi-retry-btn" onclick="reiniciarJuego()">Intentar de nuevo ↻</button>
+          <button type="button" id="michi-retry-btn" class="michi-retry-btn">Intentar de nuevo ↻</button>
         </div>
       </div>
     `;
     document.body.appendChild(footerGame);
+
+    // Listeners para iniciar/reiniciar
+    const startBtn = document.getElementById("michi-start-btn");
+    if (startBtn) startBtn.addEventListener("click", reiniciarJuego);
+
+    const retryBtn = document.getElementById("michi-retry-btn");
+    if (retryBtn) retryBtn.addEventListener("click", reiniciarJuego);
   }
 
-  reiniciarJuego();
+  michiScore = 0;
+  actualizarMarcador();
 }
