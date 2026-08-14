@@ -28,7 +28,7 @@ const miembros = [
     nombre: "Benjamín Hernando",
     iniciales: "BH",
     foto: "assets/integrantes/benjamin-hernando.jpg",
-    descripcion: "Hernando es la mente prodigia de los michis, sus exitos hablan por si solo.",
+    descripcion: "Hernando es la mente prodigia de los michis, con un aura inminente y hermosura angelical, sus exitos hablan por si solo.",
     items: [
       {
         tipo: "videojuego",
@@ -62,7 +62,7 @@ const miembros = [
     nombre: "Juan Pérez",
     iniciales: "JP",
     foto: "assets/integrantes/juan-perez.jpg",
-    descripcion: "El perez, portador de mil apodos, es un reconocido momero del fondo que siempre liga las cagadas a pedo (incluso cuando no tiene que ver).",
+    descripcion: "El perez, El Zurako, WHOL. El mas fachero/Rompecorazones y con mas aura de los Michis.",
     items: [],
   },
   {
@@ -309,77 +309,146 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 /* ======================== Minijuego Michis ======================== */
 
+// Lista de personas que NO son Michis
+// Asegúrate de guardar sus imágenes en la carpeta /assets/no-integrantes/
+const noMiembros = [
+  { nombre: "Intruso 1", foto: "assets/no-integrantes/persona1.jpg" },
+  { nombre: "Intruso 2", foto: "assets/no-integrantes/persona2.jpg" },
+  { nombre: "Intruso 3", foto: "assets/no-integrantes/persona3.jpg" },
+];
+
 let michiScore = 0;
 let michiGameInterval = null;
+let juegoActivo = true;
+
+function actualizarMarcador() {
+  const scoreElem = document.getElementById("michi-score");
+  if (scoreElem) scoreElem.textContent = michiScore;
+}
+
+function perderJuego(motivo) {
+  juegoActivo = false;
+  clearInterval(michiGameInterval);
+
+  // Limpiar objetivos restantes en pantalla
+  const container = document.getElementById("michi-game-area");
+  if (container) container.innerHTML = "";
+
+  // Mostrar mensaje de derrota
+  const overlay = document.getElementById("michi-game-over");
+  const mensaje = document.getElementById("michi-game-over-msg");
+  if (overlay && mensaje) {
+    mensaje.textContent = motivo;
+    overlay.hidden = false;
+  }
+}
+
+function reiniciarJuego() {
+  michiScore = 0;
+  actualizarMarcador();
+  juegoActivo = true;
+
+  const overlay = document.getElementById("michi-game-over");
+  if (overlay) overlay.hidden = true;
+
+  const container = document.getElementById("michi-game-area");
+  if (container) container.innerHTML = "";
+
+  // Reiniciar el intervalo de aparición
+  clearInterval(michiGameInterval);
+  michiGameInterval = setInterval(crearMichiFlotante, 1400);
+}
 
 function crearMichiFlotante() {
+  if (!juegoActivo) return;
+
   const container = document.getElementById("michi-game-area");
   if (!container) return;
 
-  // Elegir un integrante al azar que tenga foto
   const miembrosConFoto = miembros.filter((m) => m.foto);
   if (miembrosConFoto.length === 0) return;
 
-  const miembro = miembrosConFoto[Math.floor(Math.random() * miembrosConFoto.length)];
+  // 30% de probabilidad de que aparezca un NO integrante
+  const esIntruso = Math.random() < 0.3 && noMiembros.length > 0;
+  
+  let objetivoData;
+  if (esIntruso) {
+    objetivoData = noMiembros[Math.floor(Math.random() * noMiembros.length)];
+  } else {
+    objetivoData = miembrosConFoto[Math.floor(Math.random() * miembrosConFoto.length)];
+  }
 
-  // Crear elemento del michi
-  const michi = document.createElement("button");
-  michi.className = "michi-target";
-  michi.type = "button";
-  michi.style.backgroundImage = `url('${miembro.foto}')`;
-  michi.setAttribute("title", `¡Cazaste a ${primerNombre(miembro.nombre)}!`);
+  // Crear elemento del personaje
+  const target = document.createElement("button");
+  target.className = `michi-target ${esIntruso ? "michi-target--intruso" : ""}`;
+  target.type = "button";
+  target.style.backgroundImage = `url('${objetivoData.foto}')`;
 
   // Posición aleatoria dentro del área del juego
   const rect = container.getBoundingClientRect();
   const posX = Math.random() * (rect.width - 60);
   const posY = Math.random() * (rect.height - 60);
 
-  michi.style.left = `${Math.max(10, posX)}px`;
-  michi.style.top = `${Math.max(10, posY)}px`;
+  target.style.left = `${Math.max(10, posX)}px`;
+  target.style.top = `${Math.max(10, posY)}px`;
 
   // Evento al hacer clic
-  michi.addEventListener("click", (e) => {
+  target.addEventListener("click", (e) => {
     e.stopPropagation();
-    michiScore++;
-    
-    // Actualizar el contador en pantalla
-    const scoreElem = document.getElementById("michi-score");
-    if (scoreElem) scoreElem.textContent = michiScore;
+    if (!juegoActivo) return;
 
-    // Efecto visual de click y remover
-    michi.style.transform = "scale(0) rotate(180deg)";
-    michi.style.opacity = "0";
-    setTimeout(() => michi.remove(), 200);
+    if (esIntruso) {
+      // Perdió por cliquear a un no-integrante
+      perderJuego(`¡Cagaste! Cliqueaste a un impostor (${objetivoData.nombre}).`);
+    } else {
+      // Punto válido
+      michiScore++;
+      actualizarMarcador();
+
+      // Efecto visual de desintegración
+      target.style.transform = "scale(0) rotate(180deg)";
+      target.style.opacity = "0";
+      setTimeout(() => target.remove(), 200);
+    }
   });
 
-  container.appendChild(michi);
+  container.appendChild(target);
 
-  // Auto-eliminar si no se cliquea a los 3.5 segundos
+  // Temporizador para hacer desaparecer el ícono
   setTimeout(() => {
-    if (michi.parentNode) {
-      michi.style.opacity = "0";
-      setTimeout(() => michi.remove(), 300);
+    if (target.parentNode && juegoActivo) {
+      if (!esIntruso) {
+        // Se escapó un Michi legítimo -> PERDIÓ
+        perderJuego("¡Se te escapó un Michi! Récord reiniciado.");
+      } else {
+        // Se escapó un impostor -> Todo bien, desaparece suavemente
+        target.style.opacity = "0";
+        setTimeout(() => target.remove(), 300);
+      }
     }
-  }, 3500);
+  }, 3000); // 3 segundos para reaccionar
 }
 
 function inicializarMinijuego() {
-  // Generar la estructura del minijuego al final del body si no existe
   if (!document.getElementById("michi-game-section")) {
     const footerGame = document.createElement("section");
     footerGame.id = "michi-game-section";
     footerGame.className = "michi-game-section reveal";
     footerGame.innerHTML = `
       <div class="michi-game-header">
-        <h3>🎮 Caza-Michis Secreto</h3>
-        <p>¡Cliqueá los michis que van apareciendo para juntar puntos!</p>
+        <h3>🎮 Caza-Michis </h3>
+        <p>Atrapá solo a los Michis reales. ¡Si cliqueás a un impostor o dejás pasar a un Michi, perdés!</p>
         <div class="michi-score-board">Puntos: <span id="michi-score">0</span></div>
       </div>
-      <div id="michi-game-area" class="michi-game-area"></div>
+      <div id="michi-game-area" class="michi-game-area">
+        <div id="michi-game-over" class="michi-game-over" hidden>
+          <p id="michi-game-over-msg">¡Perdiste!</p>
+          <button type="button" class="michi-retry-btn" onclick="reiniciarJuego()">Intentar de nuevo ↻</button>
+        </div>
+      </div>
     `;
     document.body.appendChild(footerGame);
   }
 
-  // Aparece un nuevo michi cada 1.5 segundos
-  michiGameInterval = setInterval(crearMichiFlotante, 1500);
+  reiniciarJuego();
 }
