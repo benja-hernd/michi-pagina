@@ -3,21 +3,13 @@
    Para agregar contenido nuevo, buscá al integrante acá abajo
    y sumale un objeto dentro de su lista "items". No hace falta
    tocar el HTML ni el CSS.
-
-   Cada item tiene esta forma:
-   {
-     tipo: "youtube" | "videojuego" | "pagina" | "otro",
-     titulo: "Nombre corto del contenido",
-     descripcion: "Una o dos líneas contando qué es y por qué está bueno.",
-     link: "https://..."   (a YouTube, Mediafire, u otra página)
-   }
    ========================================================= */
 
 const TIPOS = {
   youtube:    { label: "VIDEO", clase: "tipo-video" },
   videojuego: { label: "JUEGO", clase: "tipo-juego" },
   pagina:     { label: "WEB",   clase: "tipo-web"   },
-  Canal:     { label: "CANAL",   clase: "tipo-canal"   },
+  Canal:      { label: "CANAL", clase: "tipo-canal" },
   otro:       { label: "OTRO",  clase: "tipo-otro"  },
 };
 
@@ -53,6 +45,13 @@ const miembros = [
         descripcion: "Considerado una auténtica joya contemporánea, este creador ha demostrado una versatilidad única al liderar diversos proyectos que abarcan desde composiciones musicales hasta ingeniosas propuestas cómicas. Su canal funciona como un verdadero patrimonio a la imaginación, reuniendo un valioso archivo de videos centrados en el universo de Los Michis; un espacio donde la creatividad no tiene límites y donde, según cuentan las leyendas de la comunidad, aún descansa un aura de misterio debido a la gran LOST MEDIA que alguna vez formó parte de su historia.",
         imagen: "assets/items/mauriprod.jpg",
         link: "https://www.youtube.com/@mauriprod",
+      },
+      {
+        tipo: "pagina",
+        titulo: "Mauri Projects",
+        descripcion: "La web personal donde Mauri va subiendo sus proyectos: scripts, experimentos, herramientas y todo lo que se le ocurra programar. Un archivo vivo de su producción tech.",
+        imagen: "assets/items/mauri-projects.jpg",
+        link: "https://maurisis.github.io/mauriprojects/",
       },
     ],
   },
@@ -315,10 +314,9 @@ document.addEventListener("DOMContentLoaded", () => {
   inicializarMinijuego();
   inicializarRevelado();
 });
+
 /* ======================== Minijuego Michis ======================== */
 
-// Lista de personas que NO son Michis
-// Asegúrate de guardar sus imágenes en la carpeta /assets/no-integrantes/
 const noMiembros = [
   { nombre: "Intruso 1", foto: "assets/no-integrantes/persona1.jpg" },
   { nombre: "Intruso 2", foto: "assets/no-integrantes/persona2.jpg" },
@@ -329,6 +327,39 @@ let michiScore = 0;
 let michiLoopTimeout = null;
 let juegoActivo = false;
 
+// === NUEVO: Contador de tiempo ===
+let michiStartTime = 0;
+let michiTimeInterval = null;
+
+function formatearTiempo(ms) {
+  const totalSeg = ms / 1000;
+  const minutos = Math.floor(totalSeg / 60);
+  const segundos = (totalSeg % 60).toFixed(1);
+  if (minutos === 0) return `${segundos}s`;
+  return `${minutos}m ${segundos}s`;
+}
+
+function actualizarTiempo() {
+  const timeElem = document.getElementById("michi-time");
+  if (!timeElem || michiStartTime === 0) return;
+  const transcurrido = Date.now() - michiStartTime;
+  timeElem.textContent = formatearTiempo(transcurrido);
+}
+
+function iniciarContador() {
+  michiStartTime = Date.now();
+  if (michiTimeInterval) clearInterval(michiTimeInterval);
+  michiTimeInterval = setInterval(actualizarTiempo, 100);
+  actualizarTiempo();
+}
+
+function detenerContador() {
+  if (michiTimeInterval) {
+    clearInterval(michiTimeInterval);
+    michiTimeInterval = null;
+  }
+}
+
 function actualizarMarcador() {
   const scoreElem = document.getElementById("michi-score");
   if (scoreElem) scoreElem.textContent = michiScore;
@@ -336,20 +367,24 @@ function actualizarMarcador() {
 
 function perderJuego(motivo) {
   juegoActivo = false;
+  detenerContador();
+
   if (michiLoopTimeout) clearTimeout(michiLoopTimeout);
 
-  // Limpiar objetivos restantes en pantalla
+  // Calcular tiempo final
+  const tiempoFinal = michiStartTime > 0 ? Date.now() - michiStartTime : 0;
+  michiStartTime = 0;
+
   const container = document.getElementById("michi-game-area");
   if (container) {
     const targets = container.querySelectorAll(".michi-target");
     targets.forEach((t) => t.remove());
   }
 
-  // Mostrar mensaje de derrota
   const overlay = document.getElementById("michi-game-over");
   const mensaje = document.getElementById("michi-game-over-msg");
   if (overlay && mensaje) {
-    mensaje.textContent = motivo;
+    mensaje.innerHTML = `${motivo}<br><small style="color:#ffeb3b; font-weight:normal;">Puntos: ${michiScore} · Tiempo: ${formatearTiempo(tiempoFinal)}</small>`;
     overlay.style.display = "flex";
   }
 }
@@ -359,8 +394,6 @@ function programarSiguienteMichi() {
 
   crearMichiFlotante();
 
-  // DIFICULTAD PROGRESIVA (Aparición)
-  // Arranca en 1500ms (1.5s) y baja 40ms por cada punto, hasta un mínimo de 400ms
   const intervaloAparicion = Math.max(400, 1500 - michiScore * 40);
 
   if (michiLoopTimeout) clearTimeout(michiLoopTimeout);
@@ -372,21 +405,24 @@ function reiniciarJuego() {
   actualizarMarcador();
   juegoActivo = true;
 
-  // Ocultar overlays
   const startOverlay = document.getElementById("michi-game-start");
   if (startOverlay) startOverlay.style.display = "none";
 
   const gameOverOverlay = document.getElementById("michi-game-over");
   if (gameOverOverlay) gameOverOverlay.style.display = "none";
 
-  // Limpiar fichas viejas
   const container = document.getElementById("michi-game-area");
   if (container) {
     const targets = container.querySelectorAll(".michi-target");
     targets.forEach((t) => t.remove());
   }
 
-  // Iniciar loop dinámico del juego
+  // Resetear contador visual
+  const timeElem = document.getElementById("michi-time");
+  if (timeElem) timeElem.textContent = "0.0s";
+
+  iniciarContador();
+
   if (michiLoopTimeout) clearTimeout(michiLoopTimeout);
   programarSiguienteMichi();
 }
@@ -402,7 +438,6 @@ function crearMichiFlotante() {
   const miembrosConFoto = miembros.filter((m) => m.foto);
   if (miembrosConFoto.length === 0) return;
 
-  // 30% de probabilidad de que aparezca un NO integrante
   const esIntruso = Math.random() < 0.3 && noMiembros.length > 0;
   
   let objetivoData;
@@ -412,13 +447,11 @@ function crearMichiFlotante() {
     objetivoData = miembrosConFoto[Math.floor(Math.random() * miembrosConFoto.length)];
   }
 
-  // Crear elemento del personaje
   const target = document.createElement("button");
   target.className = `michi-target ${esIntruso ? "michi-target--intruso" : ""}`;
   target.type = "button";
   target.style.backgroundImage = `url('${objetivoData.foto}')`;
 
-  // Posición aleatoria dentro del área del juego
   const rect = container.getBoundingClientRect();
   const posX = Math.random() * (rect.width - 60);
   const posY = Math.random() * (rect.height - 60);
@@ -426,7 +459,6 @@ function crearMichiFlotante() {
   target.style.left = `${Math.max(10, posX)}px`;
   target.style.top = `${Math.max(10, posY)}px`;
 
-  // Evento al hacer clic
   target.addEventListener("click", (e) => {
     e.stopPropagation();
     if (!juegoActivo) return;
@@ -445,8 +477,6 @@ function crearMichiFlotante() {
 
   container.appendChild(target);
 
-  // DIFICULTAD PROGRESIVA (Desaparición)
-  // Arranca en 3000ms (3s) y baja 60ms por cada punto, hasta un mínimo de 800ms
   const tiempoVida = Math.max(800, 3000 - michiScore * 60);
 
   setTimeout(() => {
@@ -470,15 +500,15 @@ function inicializarMinijuego() {
       <div class="michi-game-header">
         <h3>🎮 Caza-Michis</h3>
         <p>Atrapá solo a los Michis reales. ¡A medida que sumás puntos se pone más rápido!</p>
-        <div class="michi-score-board">Puntos: <span id="michi-score">0</span></div>
+        <div class="michi-stats">
+          <div class="michi-score-board">Puntos: <span id="michi-score">0</span></div>
+          <div class="michi-time-board">⏱ Tiempo: <span id="michi-time">0.0s</span></div>
+        </div>
       </div>
       <div id="michi-game-area" class="michi-game-area">
-        <!-- Overlay inicial -->
         <div id="michi-game-start" class="michi-game-over" style="display: flex;">
           <button type="button" id="michi-start-btn" class="michi-retry-btn">▶ Empezar a jugar</button>
         </div>
-
-        <!-- Overlay de Game Over -->
         <div id="michi-game-over" class="michi-game-over" style="display: none;">
           <p id="michi-game-over-msg">¡Perdiste!</p>
           <button type="button" id="michi-retry-btn" class="michi-retry-btn">Intentar de nuevo ↻</button>
@@ -487,7 +517,6 @@ function inicializarMinijuego() {
     `;
     document.body.appendChild(footerGame);
 
-    // Listeners para iniciar/reiniciar
     const startBtn = document.getElementById("michi-start-btn");
     if (startBtn) startBtn.addEventListener("click", reiniciarJuego);
 
