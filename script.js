@@ -49,7 +49,7 @@ const miembros = [
       {
         tipo: "pagina",
         titulo: "Mauri Projects",
-        descripcion: "La web personal donde Mauri va subiendo sus proyectos: scripts, experimentos, herramientas y todo lo que se le ocurra programar. Un archivo vivo de su producción tech.",
+        descripcion: "La web personal donde Mauri va subiendo sus pavadas, esta work in progress",
         imagen: "assets/items/mauri-projects.jpg",
         link: "https://maurisis.github.io/mauriprojects/",
       },
